@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+package bookstore;
+
+// Definição do serviço de Catálogo de Livros
+service CatalogService {
+    rpc GetBookInfo (BookRequest) returns (BookInfoResponse);
+    rpc ListBooks (Empty) returns (BookListResponse);
+}
+
+// Mensagens utilizadas pelo serviço
+message BookRequest {
+    string title = 1;
+}
+
+message BookInfoResponse {
+    string title = 1;
+    string author = 2;
+    int32 year = 3;
+    int32 stock = 4;
+    double price = 5;
+}
+
+message Empty {}
+
+message Book {
+    string title = 1;
+    string author = 2;
+    int32 year = 3;
+    int32 stock = 4;
+    double price = 5;
+}
+
+message BookListResponse {
+    repeated Book books = 1;
+}

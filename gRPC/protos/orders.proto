@@ -1,0 +1,49 @@
+syntax = "proto3";
+
+package bookstore;
+
+// Definição do serviço de Gestão de Pedidos
+service OrderService {
+    rpc PlaceOrder (OrderRequest) returns (OrderResponse);
+    rpc GetOrderDetails (OrderDetailsRequest) returns (OrderDetailsResponse);
+    rpc ListOrders (UserRequest) returns (OrderListResponse);
+}
+
+// Mensagens utilizadas pelo serviço
+message OrderRequest {
+    string user_id = 1;
+    repeated OrderItem items = 2;
+}
+
+message OrderItem {
+    string title = 1;
+    int32 quantity = 2;
+}
+
+message OrderResponse {
+    string order_id = 1;
+}
+
+message OrderDetailsRequest {
+    string order_id = 1;
+}
+
+message OrderDetailsResponse {
+    string order_id = 1;
+    string user_id = 2;
+    repeated OrderItem items = 3;
+    string order_date = 4;
+}
+
+message UserRequest {
+    string user_id = 1;
+}
+
+message OrderListResponse {
+    repeated OrderSummary orders = 1;
+}
+
+message OrderSummary {
+    string order_id = 1;
+    repeated string titles = 2;
+}
