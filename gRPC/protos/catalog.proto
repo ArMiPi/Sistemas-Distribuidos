@@ -10,25 +10,28 @@ service CatalogService {
 
 // Mensagens utilizadas pelo serviço
 message BookRequest {
-    string title = 1;
+    string b_id = 1;
 }
 
 message BookInfoResponse {
-    string title = 1;
-    string author = 2;
-    int32 year = 3;
-    int32 stock = 4;
-    double price = 5;
+    string b_id = 1;
+    string title = 2;
+    string author = 3;
+    int32 year = 4;
+    int32 stock = 5;
+    double price = 6;
+    string erro = 7;
 }
 
 message Empty {}
 
 message Book {
-    string title = 1;
-    string author = 2;
-    int32 year = 3;
-    int32 stock = 4;
-    double price = 5;
+    string b_id = 1;
+    string title = 2;
+    string author = 3;
+    int32 year = 4;
+    int32 stock = 5;
+    double price = 6;
 }
 
 message BookListResponse {

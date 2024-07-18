@@ -38,7 +38,7 @@ def register():
                     "register.html", msg_erro="Usuário já cadastrado"
                 )
 
-        return redirect(url_for("index"))
+        return redirect(url_for("bookstore"))
 
     return render_template("register.html")
 
@@ -62,9 +62,30 @@ def login():
                     "login.html", msg_erro="Usuário ou senha incorreto"
                 )
 
-        return redirect(url_for("index"))
+        return redirect(url_for("bookstore"))
 
     return render_template("login.html")
+
+
+@app.route("/bookstore", methods=["GET", "POST"])
+def bookstore():
+    if request.method == "POST":
+        b_id = request.form["b_id"]
+        quantity = request.form["quantity"]
+
+        with grpc.insecure_channel(GRPC_ROUTE) as channel:
+            catalog_stub = catalog_pb2_grpc.CatalogServiceStub(channel)
+
+            try:
+                response = catalog_stub.GetBookInfo(b_id=b_id)
+
+                print(response)
+            except:
+                return render_template(
+                    "bookstore.html", msg_erro="Não foi possível realizar a compra"
+                )
+
+    return render_template("bookstore.html")
 
 
 if __name__ == "__main__":
