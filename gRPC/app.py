@@ -69,23 +69,27 @@ def login():
 
 @app.route("/bookstore", methods=["GET", "POST"])
 def bookstore():
-    if request.method == "POST":
-        b_id = request.form["b_id"]
-        quantity = request.form["quantity"]
+    with grpc.insecure_channel(GRPC_ROUTE) as channel:
+        catalog_stub = catalog_pb2_grpc.CatalogServiceStub(channel)
 
-        with grpc.insecure_channel(GRPC_ROUTE) as channel:
-            catalog_stub = catalog_pb2_grpc.CatalogServiceStub(channel)
+        books = catalog_stub.ListBooks(catalog_pb2.Empty())
+        if request.method == "POST":
+            book_id = request.form["b_id"]
+            quantity = request.form["quantity"]
 
             try:
-                response = catalog_stub.GetBookInfo(b_id=b_id)
-
-                print(response)
-            except:
-                return render_template(
-                    "bookstore.html", msg_erro="Não foi possível realizar a compra"
+                response = catalog_stub.GetBookInfo(
+                    catalog_pb2.BookRequest(b_id=book_id)
                 )
 
-    return render_template("bookstore.html")
+                print(response)
+            except Exception as e:
+                print(e)
+                return render_template(
+                    "bookstore.html", books=books.books, msg_erro="Não foi possível realizar a compra", b_id_error=book_id
+                )
+
+    return render_template("bookstore.html", books=books.books)
 
 
 if __name__ == "__main__":

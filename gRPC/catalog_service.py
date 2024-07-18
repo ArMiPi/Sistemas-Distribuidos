@@ -45,7 +45,7 @@ class CatalogService(catalog_pb2_grpc.CatalogServiceServicer):
 
     def GetBookInfo(self, request: BookRequest, context) -> BookInfoResponse:
         if request.b_id in self.__books:
-            book = self.__books[b_id]
+            book = self.__books[request.b_id]
             return catalog_pb2.BookInfoResponse(
                 b_id=request.b_id,
                 title=book["title"],
@@ -58,7 +58,7 @@ class CatalogService(catalog_pb2_grpc.CatalogServiceServicer):
         msg_erro = "Livro não encontrado"
         context.set_code(grpc.StatusCode.NOT_FOUND)
         context.set_details(msg_erro)
-        return catalog_pb2.BookInfoResponse(erro=msg_erro)
+        return catalog_pb2.BookInfoResponse(erro=msg_erro, b_id=request.b_id)
 
     def ListBooks(self, request: BookRequest, context) -> BookListResponse:
         books = [

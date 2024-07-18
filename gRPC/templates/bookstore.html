@@ -11,22 +11,24 @@
         <h1>Catálogo</h1>
         <div class="books-container">
             {% for book in books %}
+                {% if book.stock > 0 %}
                 <div  class="book-container"> 
-                    <p class="book-detail"> {{ book['title'] }} - {{ book['author'] }}, {{ book['year'] }} </p>
-                    <p class="book-stock"> {{ book['stock'] }} </p>
-                    <p class="book-price"> R$ {{ book['price'] }} </p>
-                    {% if msg_erro %}
+                    <p class="book-detail"> {{ book.title }} - {{ book.author }}, {{ book.year }} </p>
+                    <p class="book-stock"> Estoque: {{ book.stock }} </p>
+                    <p class="book-price"> R$ {{ book.price }} </p>
+                    {% if msg_erro and b_id_error and book.b_id == b_id_error %}
                     <p style="color: red;">{{ msg_erro }}</p>
                     {% endif %}
                     <form action="/bookstore" method="post">
                         <div class="form-group">
                             <label for="quantity">Quantidade:</label>
-                            <input type="number" id="quantity" name="quantity" min="1" max="{{ book['stock'] }}">
-                            <input type="hidden" name="b_id" value="{{ book["b_id"] }}">
+                            <input type="number" id="quantity" name="quantity" min="1" max="{{ book.stock }}">
+                            <input type="hidden" name="b_id" value="{{ book.b_id }}">
                             <button type="submit">Comprar</button>
                         </div>
                     </form>
                 </div>
+                {% endif %}
             {% endfor %}
         </div>
     </div>
