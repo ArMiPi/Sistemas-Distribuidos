@@ -8,7 +8,20 @@
 </head>
 <body>
     <div class="container">
-        <h1>Catálogo</h1>
+        <div class="header">
+            <div style="display: block;">
+                <form action="/orders" method="get" style="margin: 10px 0px;">
+                    <button type="submit">Pedidos</button>
+                </form>
+                <form action="/search" method="get">
+                    <button type="submit">Busca</button>
+                </form>
+            </div>
+            <h1>Catálogo</h1>
+            <form action="/logout" method="post">
+                <button type="submit">Logout</button>
+            </form>
+        </div>
         <div class="books-container">
             {% for book in books %}
                 {% if book.stock > 0 %}
@@ -16,8 +29,11 @@
                     <p class="book-detail"> {{ book.title }} - {{ book.author }}, {{ book.year }} </p>
                     <p class="book-stock"> Estoque: {{ book.stock }} </p>
                     <p class="book-price"> R$ {{ book.price }} </p>
-                    {% if msg_erro and b_id_error and book.b_id == b_id_error %}
+                    {% if msg_erro and b_id_info and book.b_id == b_id_info %}
                     <p style="color: red;">{{ msg_erro }}</p>
+                    {% endif %}
+                    {% if order and b_id_info and book.b_id == b_id_info %}
+                    <p style="font-size: 12px;">Pedido Realizado. Id do pedido: <div style="font-size: 13p; font-weight: bold;">{{ order }}</div></p>
                     {% endif %}
                     <form action="/bookstore" method="post">
                         <div class="form-group">
@@ -27,6 +43,13 @@
                             <button type="submit">Comprar</button>
                         </div>
                     </form>
+                </div>
+                {% else %}
+                {% if order and b_id_info and book.b_id == b_id_info %}
+                <div class="book-container">
+                    <p style="font-size: 12px;">Pedido Realizado. Id do pedido: <div style="font-size: 13p; font-weight: bold;">{{ order }}</div></p>
+                </div>
+                {% endif %}
                 </div>
                 {% endif %}
             {% endfor %}

@@ -1,52 +1,84 @@
+from __future__ import annotations
+
 import uuid
 from datetime import datetime
+from typing import TYPE_CHECKING
 
 import grpc
+from typing_extensions import Literal
 
 import orders_pb2
 import orders_pb2_grpc
 
+if TYPE_CHECKING:
+    from orders_pb2 import (
+        OrderGetterRequest,
+        OrderGetterResponse,
+        OrderListResponse,
+        OrderRequest,
+        OrderResponse,
+        UserRequest,
+    )
+
 
 class OrderService(orders_pb2_grpc.OrderServiceServicer):
     def __init__(self):
-        self.orders = {}
+        self.__orders: dict[
+            str, dict[str, dict[Literal["b_id", "quantidade", "hora"], str | int]]
+        ] = {}
 
-    def PlaceOrder(self, request, context):
+    def PlaceOrder(self, request: OrderRequest, context) -> OrderResponse:
         order_id = str(uuid.uuid4())
-        order_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        self.orders[order_id] = {
-            "user_id": request.user_id,
-            "items": [
-                {"title": item.title, "quantity": item.quantity}
-                for item in request.items
-            ],
-            "order_date": order_date,
-        }
-        return orders_pb2.OrderResponse(order_id=order_id)
+        user_id = request.user_id
 
-    def GetOrderDetails(self, request, context):
-        order = self.orders.get(request.order_id)
-        if not order:
-            context.set_code(grpc.StatusCode.NOT_FOUND)
-            context.set_details("Order not found")
-            return orders_pb2.OrderDetailsResponse()
-        items = [
-            orders_pb2.OrderItem(title=item["title"], quantity=item["quantity"])
-            for item in order["items"]
-        ]
-        return orders_pb2.OrderDetailsResponse(
-            order_id=request.order_id,
-            user_id=order["user_id"],
-            items=items,
-            order_date=order["order_date"],
+        if user_id not in self.__orders:
+            self.__orders.update({user_id: {}})
+
+        orders = self.__orders[user_id]
+        orders.update(
+            {
+                order_id: {
+                    "b_id": request.b_id,
+                    "quantidade": request.quantity,
+                    "hora": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                }
+            }
         )
 
-    def ListOrders(self, request, context):
-        user_orders = [
-            orders_pb2.OrderSummary(
-                order_id=order_id, titles=[item["title"] for item in order["items"]]
-            )
-            for order_id, order in self.orders.items()
-            if order["user_id"] == request.user_id
+        return orders_pb2.OrderResponse(order_id=order_id)
+
+    def ListOrders(self, request: UserRequest, context) -> OrderListResponse:
+        user_id = request.user_id
+        if user_id not in self.__orders:
+            context.set_code(grpc.StatusCode.NOT_FOUND)
+            context.set_details("User not found")
+            return orders_pb2.OrderListResponse(orders=[])
+
+        user_orders = self.__orders[user_id]
+        orders = [
+            orders_pb2.OrderSummary(order_id=order_id, hour=livro["hora"])
+            for order_id, livro in user_orders.items()
         ]
-        return orders_pb2.OrderListResponse(orders=user_orders)
+        return orders_pb2.OrderListResponse(orders=orders)
+
+    def GetOrder(self, request: OrderGetterRequest, context) -> OrderGetterResponse:
+        user_id = request.user_id
+        order_id = request.order_id
+
+        if user_id not in self.__orders:
+            context.set_code(grpc.StatusCode.NOT_FOUND)
+            context.set_details("User not found")
+            return orders_pb2.OrderGetterResponse()
+
+        orders = self.__orders[user_id]
+
+        if order_id not in orders:
+            context.set_code(grpc.StatusCode.NOT_FOUND)
+            context.set_details("Order not found")
+            return orders_pb2.OrderGetterResponse()
+
+        order = orders[order_id]
+
+        return orders_pb2.OrderGetterResponse(
+            b_id=order["b_id"], quantity=order["quantidade"], hour=order["hora"]
+        )

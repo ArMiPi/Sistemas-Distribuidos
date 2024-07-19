@@ -14,7 +14,18 @@ body {
     padding: 20px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     border-radius: 10px;
+    width: 60vw;
+    height: 90vh;
+}
+
+.container-principal {
+    text-align: center;
+    background: white;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
     width: 800px;
+    height: 400px;
 }
 
 h1 {
@@ -55,6 +66,17 @@ input[type="password"] {
     box-sizing: border-box;
 }
 
+.header {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    margin-bottom: 10px;
+}
+.header button {
+    padding: 10px 20px;
+    font-size: 1em;
+}
+
 /* Container dos livros */
 .books-container {
     display: flex;
@@ -70,7 +92,7 @@ input[type="password"] {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     padding: 20px;
     margin: 10px;
-    width: 250px;
+    width: 20vw;
     text-align: left;
 }
 
@@ -113,4 +135,23 @@ button[type="submit"] {
 
 button[type="submit"]:hover {
     background-color: #0056b3;
+}
+
+.order-container {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin: 10px;
+    width: 90%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+}
+
+.orders-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
 }

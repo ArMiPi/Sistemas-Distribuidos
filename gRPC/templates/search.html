@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Livraria Online</title>
+    <link rel="stylesheet" href={{ url_for('static', filename='style.css') }}>
+</head>
+<body>
+    <div class="container-principal">
+        <div class="header">
+            <div style="display: block;">
+                <form action="/orders" method="get" style="margin: 10px 0px;">
+                    <button type="submit">Pedidos</button>
+                </form>
+                <form action="/bookstore" method="get">
+                    <button type="submit">Catálogo</button>
+                </form>
+            </div>
+            <h1>Buscas</h1>
+            <form action="/logout" method="post">
+                <button type="submit">Logout</button>
+            </form>
+        </div>
+        <form action="/search" method="post">
+            <div class="form-group">
+                <h2><label for="book_name">LIVRO</label></h2>
+                <input type="text" id="book_name" name="book_name">
+                <input type="hidden" name="tipo" value="book">
+            </div>
+            <button type="submit" class="btn">Buscar Livro</button>
+        </form>
+
+        {% if book %}
+        <div class="books-container">
+            <div  class="book-container"> 
+                <p class="book-detail"> {{ book.title }} - {{ book.author }}, {{ book.year }} </p>
+                <p class="book-stock"> Estoque: {{ book.stock }} </p>
+                <p class="book-price"> R$ {{ book.price }} </p>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if msg_erro_livro %}
+        <p style="color: red;">{{ msg_erro_livro }}</p>
+        {% endif %}
+
+        <form action="/search" method="post">
+            <div class="form-group">
+                <h2><label for="id_pedido">PEDIDO</label></h2>
+                <input type="text" id="id_pedido" name="id_pedido">
+                <input type="hidden" name="tipo" value="order">
+            </div>
+            <button type="submit" class="btn">Buscar Pedido</button>
+        </form>
+        {% if book_pedido and pedido %}
+        <div class="books-container">
+            <div  class="book-container"> 
+                <p class="book-detail"> {{ id_pedido }} - {{ pedido.hour }} </p>
+                <p class="book-detail"> {{ book_pedido.title }} - {{ book_pedido.author }}, {{ book_pedido.year }} </p>
+                <p class="book-stock"> Quantidade: {{ pedido.quantity }} </p>
+                <p class="book-price"> R$ {{ book_pedido.price }} </p>
+            </div>
+        </div>
+        {% endif %}
+        {% if msg_erro_pedido %}
+        <p style="color: red;">{{ msg_erro_pedido }}</p>
+        {% endif %}
+    </div>
+</body>
+</html>

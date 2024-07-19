@@ -5,11 +5,17 @@ package bookstore;
 // Definição do serviço de Catálogo de Livros
 service CatalogService {
     rpc GetBookInfo (BookRequest) returns (BookInfoResponse);
+    rpc GetBookInfoById (BookRequestId) returns (BookInfoResponse);
     rpc ListBooks (Empty) returns (BookListResponse);
+    rpc BuyBook (BuyBookRequest) returns (Empty);
 }
 
 // Mensagens utilizadas pelo serviço
 message BookRequest {
+    string book_name = 1;
+}
+
+message BookRequestId {
     string b_id = 1;
 }
 
@@ -36,4 +42,9 @@ message Book {
 
 message BookListResponse {
     repeated Book books = 1;
+}
+
+message BuyBookRequest {
+    string b_id = 1;
+    int32 quantity = 2;
 }
